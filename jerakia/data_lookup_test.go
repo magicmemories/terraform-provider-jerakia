@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	th "github.com/jerakia/go-jerakia/testhelper"
-	fake "github.com/jerakia/go-jerakia/testhelper/client"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
