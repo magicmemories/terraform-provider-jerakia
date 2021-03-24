@@ -1,18 +1,53 @@
-TARGETS=darwin linux windows
+OS_ARCH=windows_amd64
 
-testacc:
-	rm -rf work ; \
-	mkdir work && cd work ; \
-	git clone https://github.com/jerakia/go-jerakia ; \
-	cd go-jerakia ; \
-	make docker ; \
-	export JERAKIA_TOKEN=$$(docker exec jerakia-server jerakia token create terraform --quiet) ; \
-	export JERAKIA_URL="http://localhost:9843/v1" ; \
-	cd ../.. ; \
-	TF_LOG=DEBUG TF_ACC=1 go test -v -run="$(TESTARGS)" ./jerakia/
+ifneq (,$(findstring windows,$(OS_ARCH)))
+  BINEXT=.exe
+  PLUGIN_PATH=$(APPDATA)/terraform.d/plugins
+else
+  BINEXT=
+  PLUGIN_PATH=~/.terraform.d/plugins
+endif
+
+TEST?=$$(go list ./... | grep -v 'vendor')
+HOSTNAME=local
+NAMESPACE=magicmemories
+NAME=jerakia
+BINARY=terraform-provider-${NAME}${BINEXT}
+VERSION=0.2.0
+
+default: install
 
 build:
-	go install
+	go build -o ${BINARY}
+
+release:
+	GOOS=darwin GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_darwin_amd64
+	GOOS=freebsd GOARCH=386 go build -o ./bin/${BINARY}_${VERSION}_freebsd_386
+	GOOS=freebsd GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_freebsd_amd64
+	GOOS=freebsd GOARCH=arm go build -o ./bin/${BINARY}_${VERSION}_freebsd_arm
+	GOOS=linux GOARCH=386 go build -o ./bin/${BINARY}_${VERSION}_linux_386
+	GOOS=linux GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_linux_amd64
+	GOOS=linux GOARCH=arm go build -o ./bin/${BINARY}_${VERSION}_linux_arm
+	GOOS=openbsd GOARCH=386 go build -o ./bin/${BINARY}_${VERSION}_openbsd_386
+	GOOS=openbsd GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_openbsd_amd64
+	GOOS=solaris GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_solaris_amd64
+	GOOS=windows GOARCH=386 go build -o ./bin/${BINARY}_${VERSION}_windows_386
+	GOOS=windows GOARCH=amd64 go build -o ./bin/${BINARY}_${VERSION}_windows_amd64
+
+install: build
+	mkdir -p ${PLUGIN_PATH}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	mv ${BINARY} ${PLUGIN_PATH}/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+
+test:
+	go test -i $(TEST) || exit 1
+	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
+
+testacc:
+	docker-compose up -d
+	export JERAKIA_TOKEN=$$(docker-compose exec jerakia jerakia token create terraform --quiet) ; \
+	export JERAKIA_URL="http://localhost:19843/v1" ; \
+	TF_LOG=DEBUG TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m; \
+	docker-compose down
 
 fmtcheck:
 	echo "==> Checking that code complies with gofmt requirements..."
@@ -33,9 +68,3 @@ vet:
 		echo "and fix them if necessary before submitting the code for review."; \
 		exit 1; \
 	fi
-
-targets: $(TARGETS)
-
-$(TARGETS):
-	GOOS=$@ GOARCH=amd64 go build -o "dist/$@/terraform-provider-jerakia_${TRAVIS_TAG}_x4"
-	zip -j dist/terraform-provider-jerakia_${TRAVIS_TAG}_$@_amd64.zip dist/$@/terraform-provider-jerakia_${TRAVIS_TAG}_x4

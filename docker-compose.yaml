@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  jerakia:
+    image: docker.magicmemories.com/jerakia:latest
+    ports:
+      - "19843:9992"
+    volumes:
+      - "./fixtures/etc/jerakia:/etc/jerakia"
+      - "./fixtures/var/lib/jerakia:/var/lib/jerakia"
