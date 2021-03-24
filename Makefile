@@ -47,16 +47,18 @@ testacc:
 	export JERAKIA_TOKEN=$$(docker-compose exec jerakia jerakia token create terraform --quiet) ; \
 	export JERAKIA_URL="http://localhost:19843/v1" ; \
 	TF_LOG=DEBUG TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m; \
-	docker-compose down
+	status=$$?; \
+	docker-compose down; \
+	exit $$status
 
 fmtcheck:
 	echo "==> Checking that code complies with gofmt requirements..."
-	files=$$(find . -name '*.go' | grep -v 'vendor' ) ; \
+	files=$$(go list ./... | grep -v /vendor/ ) ; \
 	gofmt_files=`gofmt -l $$files`; \
 	if [ -n "$$gofmt_files" ]; then \
 		echo 'gofmt needs running on the following files:'; \
 		echo "$$gofmt_files"; \
-		echo "You can use the command: \`make fmt\` to reformat code."; \
+		echo 'You can use the command: \`go fmt $$(go list ./... | grep -v /vendor/)\` to reformat code.'; \
 		exit 1; \
 	fi
 
