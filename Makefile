@@ -45,6 +45,7 @@ test:
 testacc:
 	docker-compose up -d
 	export JERAKIA_TOKEN=$$(docker-compose exec jerakia jerakia token create terraform --quiet) ; \
+	echo JERAKIA_TOKEN: $$JERAKIA_TOKEN; \
 	export JERAKIA_URL="http://localhost:19843/v1" ; \
 	TF_LOG=DEBUG TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m; \
 	status=$$?; \
