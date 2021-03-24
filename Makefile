@@ -43,13 +43,17 @@ test:
 	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
 
 testacc:
-	docker-compose up -d
+	docker-compose up -d ; \
+	echo "Step 1" ; \
 	export JERAKIA_TOKEN=$$(docker-compose exec jerakia jerakia token create terraform --quiet) ; \
-	echo JERAKIA_TOKEN: $$JERAKIA_TOKEN; \
+	echo "Step 2: $$JERAKIA_TOKEN"; \
 	export JERAKIA_URL="http://localhost:19843/v1" ; \
+	echo "Step 3" ; \
 	TF_LOG=DEBUG TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m; \
 	status=$$?; \
+	echo "Step 4: $$status" ; \
 	docker-compose down; \
+	echo "Step 5"; \
 	exit $$status
 
 fmtcheck:
