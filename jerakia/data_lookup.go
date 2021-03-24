@@ -5,9 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"hash/crc32"
 	"log"
 	"strconv"
-	"hash/crc32"
 
 	"github.com/jerakia/go-jerakia"
 
@@ -178,10 +178,10 @@ func expandMap(v map[string]interface{}) map[string]string {
 func hash(s string) int {
 	v := int(crc32.ChecksumIEEE([]byte(s)))
 	if v >= 0 {
-			return v
+		return v
 	}
 	if -v >= 0 {
-			return -v
+		return -v
 	}
 	// v == MinInt
 	return 0

@@ -1,12 +1,12 @@
 package jerakia
 
 import (
-  "context"
+	"context"
 	"net/http"
 
-	"github.com/jerakia/go-jerakia"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/jerakia/go-jerakia"
 )
 
 // Provider returns a schema.Provider for Jerakia
@@ -34,7 +34,7 @@ func Provider() *schema.Provider {
 	}
 }
 
-func configureProvider(ctx context.Context,d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	api_url := d.Get("api_url").(string)
 	api_token := d.Get("api_token").(string)
 

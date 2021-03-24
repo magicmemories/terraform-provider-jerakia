@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccDataSourceLookup_basic(t *testing.T) {
-	expectedPayload := map[string]interface{}{"argentina":"buenos aires", "france":"paris", "spain":"malaga"}
+	expectedPayload := map[string]interface{}{"argentina": "buenos aires", "france": "paris", "spain": "malaga"}
 	expectedJSON, err := json.Marshal(expectedPayload)
 	if err != nil {
 		t.Fatalf("Unable to marshal JSON: %s", err)
@@ -51,7 +51,7 @@ func TestAccDataSourceLookup_singleBool(t *testing.T) {
 }
 
 func TestAccDataSourceLookup_metadata(t *testing.T) {
-	expectedPayload := []interface {}{"bob", "lucy", "david"}
+	expectedPayload := []interface{}{"bob", "lucy", "david"}
 	expectedJSON, err := json.Marshal(expectedPayload)
 	if err != nil {
 		t.Fatalf("Unable to marshal JSON: %s", err)
