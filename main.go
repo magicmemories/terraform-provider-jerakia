@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform/plugin"
-	"github.com/jerakia/terraform-provider-jerakia/jerakia"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+
+	"terraform-provider-jerakia/jerakia"
 )
 
 func main() {

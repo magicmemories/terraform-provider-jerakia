@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
+	th "github.com/jerakia/go-jerakia/testhelper"
+	fake "github.com/jerakia/go-jerakia/testhelper/client"
 
-	fixtures "github.com/jerakia/go-jerakia/testing"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceLookup_basic(t *testing.T) {
-	resultJSON, err := json.Marshal(fixtures.LookupBasicResult.Payload)
+	expectedPayload := map[string]interface{}{"argentina":"buenos aires", "france":"paris", "spain":"malaga"}
+	expectedJSON, err := json.Marshal(expectedPayload)
 	if err != nil {
 		t.Fatalf("Unable to marshal JSON: %s", err)
 	}
@@ -23,7 +25,7 @@ func TestAccDataSourceLookup_basic(t *testing.T) {
 				Config: testAccDataSourceLookup_basic,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						"data.jerakia_lookup.lookup_1", "result_json", string(resultJSON)),
+						"data.jerakia_lookup.lookup_1", "result_json", string(expectedJSON)),
 				),
 			},
 		},
@@ -31,10 +33,7 @@ func TestAccDataSourceLookup_basic(t *testing.T) {
 }
 
 func TestAccDataSourceLookup_singleBool(t *testing.T) {
-	resultJSON, err := json.Marshal(fixtures.LookupSingleBoolResult.Payload)
-	if err != nil {
-		t.Fatalf("Unable to marshal JSON: %s", err)
-	}
+	expectedJSON := "true"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -44,7 +43,7 @@ func TestAccDataSourceLookup_singleBool(t *testing.T) {
 				Config: testAccDataSourceLookup_singleBool,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						"data.jerakia_lookup.lookup_1", "result_json", string(resultJSON)),
+						"data.jerakia_lookup.lookup_1", "result_json", string(expectedJSON)),
 				),
 			},
 		},
@@ -52,7 +51,8 @@ func TestAccDataSourceLookup_singleBool(t *testing.T) {
 }
 
 func TestAccDataSourceLookup_metadata(t *testing.T) {
-	resultJSON, err := json.Marshal(fixtures.LookupMetadataResult.Payload)
+	expectedPayload := []interface {}{"bob", "lucy", "david"}
+	expectedJSON, err := json.Marshal(expectedPayload)
 	if err != nil {
 		t.Fatalf("Unable to marshal JSON: %s", err)
 	}
@@ -65,7 +65,7 @@ func TestAccDataSourceLookup_metadata(t *testing.T) {
 				Config: testAccDataSourceLookup_metadata,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
-						"data.jerakia_lookup.lookup_1", "result_json", string(resultJSON)),
+						"data.jerakia_lookup.lookup_1", "result_json", string(expectedJSON)),
 				),
 			},
 		},
@@ -91,8 +91,8 @@ const testAccDataSourceLookup_metadata = `
     key       = "users"
     namespace = "test"
 
-    metadata {
-      hostname = "example",
+    metadata = {
+      hostname = "example"
     }
   }
 `

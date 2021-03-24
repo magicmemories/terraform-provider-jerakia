@@ -1,0 +1,19 @@
+---
+policydir: /etc/jerakia/policy.d
+logfile: /var/log/jerakia/jerakia.log
+loglevel: debug
+plugindir: /etc/jerakia/lib
+
+# Location of internal Jerakia databases used for scope storage, token management..etc
+#databasedir: test/fixtures/var/db/jerakia
+databasedir: /tmp
+
+schema:
+  docroot: /var/lib/jerakia/schema
+
+plugins:
+  hiera:
+    foo: bar
+
+server:
+  port: 9992

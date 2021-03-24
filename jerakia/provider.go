@@ -1,12 +1,16 @@
 package jerakia
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+  "context"
+	"net/http"
+
+	"github.com/jerakia/go-jerakia"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // Provider returns a schema.Provider for Jerakia
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_url": &schema.Schema{
@@ -26,19 +30,22 @@ func Provider() terraform.ResourceProvider {
 			"jerakia_lookup": dataSourceLookup(),
 		},
 
-		ConfigureFunc: configureProvider,
+		ConfigureContextFunc: configureProvider,
 	}
 }
 
-func configureProvider(d *schema.ResourceData) (interface{}, error) {
-	config := Config{
-		apiUrl:   d.Get("api_url").(string),
-		apiToken: d.Get("api_token").(string),
+func configureProvider(ctx context.Context,d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	api_url := d.Get("api_url").(string)
+	api_token := d.Get("api_token").(string)
+
+	var diags diag.Diagnostics
+
+	config := jerakia.ClientConfig{
+		URL:   api_url,
+		Token: api_token,
 	}
 
-	if err := config.LoadAndValidate(); err != nil {
-		return nil, err
-	}
+	client := jerakia.NewClient(http.DefaultClient, config)
 
-	return &config, nil
+	return client, diags
 }

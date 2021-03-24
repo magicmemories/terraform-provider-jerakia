@@ -2,21 +2,23 @@ package jerakia
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
+	"hash/crc32"
 
 	"github.com/jerakia/go-jerakia"
 
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func dataSourceLookup() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceLookupRead,
+		ReadContext: dataSourceLookupRead,
 
 		Schema: map[string]*schema.Schema{
 			"key": &schema.Schema{
@@ -26,8 +28,7 @@ func dataSourceLookup() *schema.Resource {
 
 			"namespace": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "default",
+				Required: true,
 			},
 
 			"policy": &schema.Schema{
@@ -85,8 +86,10 @@ func dataSourceLookup() *schema.Resource {
 	}
 }
 
-func dataSourceLookupRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+func dataSourceLookupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := m.(jerakia.Client)
+
+	var diags diag.Diagnostics
 
 	var lookupOpts jerakia.LookupOpts
 
@@ -128,15 +131,15 @@ func dataSourceLookupRead(d *schema.ResourceData, meta interface{}) error {
 	key := d.Get("key").(string)
 	log.Printf("[DEBUG] jerakia_lookup lookup options for %s: %#v", key, lookupOpts)
 
-	result, err := jerakia.Lookup(&config.client, key, &lookupOpts)
+	result, err := jerakia.Lookup(&client, key, &lookupOpts)
 	if err != nil {
-		return fmt.Errorf("Error querying Jerakia for %s: %s", key, err)
+		return diag.FromErr(fmt.Errorf("Error querying Jerakia for %s: %s", key, err))
 	}
 
 	log.Printf("[DEBUG] jerakia_lookup result for %s: %#v", key, result)
 
 	if result.Status == "failed" {
-		return fmt.Errorf("Error querying Jerakia for %s: %s", key, result.Message)
+		return diag.FromErr(fmt.Errorf("Error querying Jerakia for %s: %s", key, result.Message))
 	}
 
 	d.SetId(generateId(lookupOpts))
@@ -146,18 +149,18 @@ func dataSourceLookupRead(d *schema.ResourceData, meta interface{}) error {
 
 	payload, err := json.Marshal(result.Payload)
 	if err != nil {
-		return fmt.Errorf("Error marshaling Jerakia result for %s: %s", key, err)
+		return diag.FromErr(fmt.Errorf("Error marshaling Jerakia result for %s: %s", key, err))
 	}
 
 	d.Set("result_json", string(payload))
 
-	return nil
+	return diags
 }
 
 func generateId(opts jerakia.LookupOpts) string {
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(opts)
-	return strconv.Itoa(hashcode.String(buf.String()))
+	return strconv.Itoa(hash(buf.String()))
 }
 
 func expandMap(v map[string]interface{}) map[string]string {
@@ -170,4 +173,16 @@ func expandMap(v map[string]interface{}) map[string]string {
 	}
 
 	return vmap
+}
+
+func hash(s string) int {
+	v := int(crc32.ChecksumIEEE([]byte(s)))
+	if v >= 0 {
+			return v
+	}
+	if -v >= 0 {
+			return -v
+	}
+	// v == MinInt
+	return 0
 }
