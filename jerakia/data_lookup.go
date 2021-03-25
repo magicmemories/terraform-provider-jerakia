@@ -18,33 +18,40 @@ import (
 
 func dataSourceLookup() *schema.Resource {
 	return &schema.Resource{
+		Description: "Data source for performing Jerakia lookups.",
+
 		ReadContext: dataSourceLookupRead,
 
 		Schema: map[string]*schema.Schema{
 			"key": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The name of the Jerakia key to look up.",
+				Type:         schema.TypeString,
+				Required:     true,
 			},
 
 			"namespace": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The namespace to query.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 
 			"policy": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The policy to use for the query",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 
 			"lookup_type": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Description:  "The type of lookup to perform. Valid values are `first` and `cascade`.",
+				Type:         schema.TypeString,
+				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{
 					"first", "cascade",
 				}, false),
 			},
 
 			"merge": &schema.Schema{
+				Description: "The merge strategy to use for cascade lookups. Valid values are `array`, `hash`, and `deep_hash`.",
 				Type:     schema.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice([]string{
@@ -53,32 +60,38 @@ func dataSourceLookup() *schema.Resource {
 			},
 
 			"scope": &schema.Schema{
+				Description: "The name of an alternative scope handler to use.",
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 
 			"scope_options": &schema.Schema{
+				Description: "Options to pass to the scope handler.",
 				Type:     schema.TypeMap,
 				Optional: true,
 			},
 
 			"metadata": &schema.Schema{
+				Description: "A set of key/value pairs used by the default scope handler to set the query context.",
 				Type:     schema.TypeMap,
 				Optional: true,
 			},
 
 			// Computed
 			"status": &schema.Schema{
+				Description: "The status of the query. An error will be returned if this is `failed`.",
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 
 			"found": &schema.Schema{
+				Description: "A boolean which indicates whether a result was found.",
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
 
 			"result_json": &schema.Schema{
+				Description: "The data returned from the query, as a JSON-encoded string.",
 				Type:     schema.TypeString,
 				Computed: true,
 			},

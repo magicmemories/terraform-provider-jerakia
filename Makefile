@@ -1,4 +1,8 @@
-OS_ARCH=windows_amd64
+VERSION=0.2.0
+OS_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
+HOSTNAME=registry.terraform.io
+NAMESPACE=magicmemories
+NAME=jerakia
 
 ifneq (,$(findstring windows,$(OS_ARCH)))
   BINEXT=.exe
@@ -9,11 +13,8 @@ else
 endif
 
 TEST?=$$(go list ./... | grep -v 'vendor')
-HOSTNAME=local
-NAMESPACE=magicmemories
-NAME=jerakia
+
 BINARY=terraform-provider-${NAME}${BINEXT}
-VERSION=0.2.0
 
 default: install
 

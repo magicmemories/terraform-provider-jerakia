@@ -14,12 +14,14 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_url": &schema.Schema{
+				Description: "The URL to the Jerakia service. This can also be set with the `JERAKIA_URL` environment variable.",
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("JERAKIA_URL", ""),
 			},
 
 			"api_token": &schema.Schema{
+				Description: "The token to authenticate to Jerakia with. This can also be set with the `JERAKIA_TOKEN` environment variable.",
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("JERAKIA_TOKEN", ""),

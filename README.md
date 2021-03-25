@@ -1,6 +1,7 @@
 # terraform-provider-jerakia
 
-Jerakia provider for Terraform
+Jerakia provider for Terraform. This is a fork of the original
+`jerakia/terraform-provider-jerakia`, updated for newer versions of Terraform.
 
 ## Prerequisites
 
@@ -9,6 +10,14 @@ Jerakia provider for Terraform
 ## Terraform Configuration Example
 
 ```hcl
+terraform {
+  required_providers {
+    jerakia = {
+      source = "magicmemories/jerakia"
+    }
+  }
+}
+
 provider "jerakia" {
   api_url   = "http://127.0.0.1:9843"
   api_token = "tokentoken"
@@ -22,35 +31,38 @@ data "jerakia_lookup" "lookup_1" {
 
 ## Installation
 
-### Using a Pre-Built Binary
+### Using the Terraform registry (Recommended)
 
-Downloading and installing a pre-compiled `terraform-provider-jerakia` release
-is the recommended method of installation since it requires no additional tools
-or libraries to be installed on your workstation.
+Simply list this provider in your module's `required_providers` block, like so:
 
-1. Visit the [releases][2] page and download the latest release for your target
-   architecture.
+```terraform
+terraform {
+  required_providers {
+    jerakia = {
+      source = "magicmemories/jerakia"
+    }
+  }
+}
+```
 
-2. Unzip the downloaded file and copy the `terraform-provider-jerakia` binary
-   to a designated directory as described in Terraform's [plugin installation
-   instructions][3].
+When you run `terraform init`, the provider will be downloaded automatically.
 
 ### Building from Source
 
-> Note: Terraform requires Go 1.11 or later to successfully compile.
+> Note: The Terraform Plugin SDK supports only Go 1.15 or later (though earlier
+> versions may be able to successfully compile).
 
 1. Follow these [instructions][4] to setup a Golang development environment.
-2. Run:
+2. Check out the contents of this repository.
+3. `cd` into the checked out repository
+4. (Optional) Edit `Makefile` to set the version number you want assigned to
+   your built binary.
+5. Run `make install`
 
-```shell
-$ go get -v -u github.com/jerakia/terraform-provider-jerakia
-$ cd $GOPATH/src/github.com/jerakia/terraform-provider-jerakia
-$ make build
-```
-
-You should now have a `terraform-provider-jerakia` binary located at
-`$GOPATH/bin/terraform-provider-jerakia`. Copy this binary to a designated
-directory as described in Terraform's [plugin installation instructions][3]
+The `terraform-provider-jerakia` binary will be compiled and copied to your
+[implied local mirror directory][7] for Terraform plugins. If you list it in
+your `required_providers` block as described above, it will be picked up
+automatically.
 
 ## Development
 
@@ -66,3 +78,4 @@ Full documentation can be found in the [`docs`][6] directory.
 [4]: https://golang.org/doc/install
 [5]: https://github.com/golang/go/wiki/Modules
 [6]: /docs
+[7]: https://www.terraform.io/docs/cli/config/config-file.html#implied-local-mirror-directories
