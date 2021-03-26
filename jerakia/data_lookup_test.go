@@ -69,6 +69,41 @@ func TestAccDataSourceLookup_metadata(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceLookup_hash(t *testing.T) {
+	expectedPayload := map[string]interface{}{
+		"key0": map[string]interface{}{
+			"element0": "common",
+		},
+		"key1": map[string]interface{}{
+			"element2": "env",
+		},
+		"key2": map[string]interface{}{
+			"element3": map[string]interface{}{
+				"subelement3": "env",
+			},
+		},
+		"key3": "env",
+	}
+	expectedJSON, err := json.Marshal(expectedPayload)
+	if err != nil {
+		t.Fatalf("Unable to marshal JSON: %s", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccDataSourceLookup_hash,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"data.jerakia_lookup.lookup_1", "result_json", string(expectedJSON)),
+				),
+			},
+		},
+	})
+}
+
 const testAccDataSourceLookup_basic = `
   data "jerakia_lookup" "lookup_1" {
     key       = "cities"
@@ -90,6 +125,20 @@ const testAccDataSourceLookup_metadata = `
 
     metadata = {
       hostname = "example"
+    }
+  }
+`
+
+const testAccDataSourceLookup_hash = `
+  data "jerakia_lookup" "lookup_1" {
+    key       = "hash"
+    namespace = "test"
+
+		lookup_type = "cascade"
+		merge       = "hash"
+
+    metadata = {
+      env = "dev"
     }
   }
 `

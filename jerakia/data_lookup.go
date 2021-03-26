@@ -9,7 +9,8 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/jerakia/go-jerakia"
+	//"github.com/jerakia/go-jerakia"
+	"github.com/magicmemories/go-jerakia"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/jerakia/go-jerakia"
+	//"github.com/jerakia/go-jerakia"
+	"github.com/magicmemories/go-jerakia"
 )
 
 // Provider returns a schema.Provider for Jerakia
