@@ -20,11 +20,11 @@ data "jerakia_lookup" "lookup_1" {
 
 ### Required
 
-- **key** (String) The name of the Jerakia key to look up.
 - **namespace** (String) The namespace to query.
 
 ### Optional
 
+- **key** (String) The name of the Jerakia key to look up.
 - **id** (String) The ID of this resource.
 - **lookup_type** (String) The type of lookup to perform. Valid values are `first` and `cascade`.
 - **merge** (String) The merge strategy to use for cascade lookups. Valid values are `array`, `hash`, and `deep_hash`.

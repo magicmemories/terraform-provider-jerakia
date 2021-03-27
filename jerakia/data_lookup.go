@@ -27,7 +27,7 @@ func dataSourceLookup() *schema.Resource {
 			"key": &schema.Schema{
 				Description: "The name of the Jerakia key to look up.",
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 			},
 
 			"namespace": &schema.Schema{

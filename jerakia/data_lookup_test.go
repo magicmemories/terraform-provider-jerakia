@@ -104,6 +104,29 @@ func TestAccDataSourceLookup_hash(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceLookup_keyless(t *testing.T) {
+	expectedPayload := map[string]interface{}{"foo": "bar", "hello": "world"}
+	expectedJSON, err := json.Marshal(expectedPayload)
+	if err != nil {
+		t.Fatalf("Unable to marshal JSON: %s", err)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccDataSourceLookup_keyless,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(
+						"data.jerakia_lookup.lookup_1", "result_json", string(expectedJSON)),
+				),
+			},
+		},
+	})
+}
+
+
 const testAccDataSourceLookup_basic = `
   data "jerakia_lookup" "lookup_1" {
     key       = "cities"
@@ -140,5 +163,11 @@ const testAccDataSourceLookup_hash = `
     metadata = {
       env = "dev"
     }
+  }
+`
+
+const testAccDataSourceLookup_keyless = `
+  data "jerakia_lookup" "lookup_1" {
+    namespace = "keyless"
   }
 `

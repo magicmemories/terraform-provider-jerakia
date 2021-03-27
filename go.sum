@@ -224,6 +224,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/magicmemories/go-jerakia v0.0.0-20210326191740-5a7bb8b00222 h1:n+VOw5KNniq/edpt3hD1P9aez0T3uzA/OAE6K+2K/xg=
 github.com/magicmemories/go-jerakia v0.0.0-20210326191740-5a7bb8b00222/go.mod h1:ctjsIwB1RBNFP28OzAlE07z/Doma7Mw7Xd+gfvrIYgY=
+github.com/magicmemories/go-jerakia v0.1.0 h1:yLkWZUdMKG1UjMt2+/j5azAUe9losGH0jFarnvvvmwo=
+github.com/magicmemories/go-jerakia v0.1.0/go.mod h1:ctjsIwB1RBNFP28OzAlE07z/Doma7Mw7Xd+gfvrIYgY=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
 github.com/mattn/go-colorable v0.1.8 h1:c1ghPdyEDarC70ftn0y+A/Ee++9zz8ljHG1b13eJ0s8=
