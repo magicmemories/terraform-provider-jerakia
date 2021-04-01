@@ -19,13 +19,21 @@ terraform {
 }
 
 provider "jerakia" {
-  api_url   = "http://127.0.0.1:9843"
-  api_token = "tokentoken"
+  api_url   = "https://jerakia.example.com"
+  api_token = "token:token"
 }
 
-data "jerakia_lookup" "lookup_1" {
+data "jerakia_lookup" "cities" {
   key       = "cities"
   namespace = "default"
+}
+
+resource "example_resource" "cities" {
+  for_each = jsondecode(data.jerakia_lookup.cities.result_json)
+
+  name       = each.key
+  country    = each.value.country
+  population = each.value.population
 }
 ```
 
@@ -73,8 +81,6 @@ This project is using [Go Modules][5] for vendor support.
 Full documentation can be found in the [`docs`][6] directory.
 
 [1]: http://terraform.io
-[2]: https://github.com/jerakia/terraform-provider-jerakia/releases
-[3]: https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin
 [4]: https://golang.org/doc/install
 [5]: https://github.com/golang/go/wiki/Modules
 [6]: /docs
